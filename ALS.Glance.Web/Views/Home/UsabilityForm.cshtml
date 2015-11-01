@@ -1,0 +1,25 @@
+﻿@{
+    Layout = null;
+    ViewBag.Title = "Usability Form - ALS Glance";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/usabilityformcss")
+</head>
+<body>
+    <div class="usabilityform">
+        <div class='container-left'>
+            <iframe src='http://pmcchp.com/als-glance' frameborder="0" height="150%" width="150%"></iframe>
+        </div>
+        <div class='container-right'>
+            <iframe src="http://goo.gl/forms/Mhq5rBSmAH" frameborder="0" height="150%" width="150%"></iframe>
+        </div>
+    </div>
+    @Scripts.Render("~/bundles/telemetryjs")
+</body>
+</html>

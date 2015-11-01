@@ -1,0 +1,386 @@
+﻿@using ALS.Glance.Web.Resources
+@model ALS.Glance.Web.Models.PatientViewModel
+
+@{
+    ViewBag.Title = Model.Name + " " + Resources.PatientResume;
+}
+<ul class="nav nav-tabs">
+    <li class="active"><a href="#results" data-toggle="tab">@Resources.PatientResume</a></li>
+    <li><a href="#details" data-toggle="tab" id="top">@Resources.PatientDetails</a></li>
+</ul>
+<br />
+<div id="main" class="tab-content">
+    <div class="tab-pane fade active in" id="results">
+        <!-- Modal -->
+        <div class="modal fade" id="aucOptions" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">AUC</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form id="aucForm" class="form-horizontal" role="form">
+                            <div class="form-group">
+                                <div class="col-md-offset-1 col-md-8">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input id="showPredictions" type="checkbox" />@Resources.PatientUseRegression
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-offset-1 col-md-3 control-label">@Resources.PatientRegressionData</label>
+                                <div class="col-md-8">
+                                    <label class="radio radio-inline col-md-3">
+                                        <input id="all" type="radio" class="radiobox" name="predictionBacklog" value="999">
+                                        <span>@Resources.PatientRegressionDataAll</span>
+
+                                    </label>
+                                    <label class="radio radio-inline col-md-3">
+                                        <input id="year" type="radio" class="radiobox" name="predictionBacklog" value="12">
+                                        <span>@Resources.PatientRegressionDataLastYear</span>
+                                    </label>
+                                    <label class="radio radio-inline col-md-4">
+                                        <input id="6months" type="radio" class="radiobox" name="predictionBacklog" value="6">
+                                        <span>@Resources.PatientRegressionDataLast6Months</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-md-offset-1 col-md-8">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input id="showFailureThresHold" type="checkbox" />@Resources.PatientShowFailureThresHold
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-offset-1 col-md-3 control-label">@Resources.PatientMuscle:</label>
+                                <div class="col-md-7 input-group bootstrap-touchspin">
+                                    @foreach (var item in Model.Muscles)
+                                    {
+                                        <label>
+                                            <span class="col-md-2">@item.Acronym</span>
+                                            <input class="col-md-2" id="@(item.Acronym)_Threshold" type="text" value="0" name="muscleThreshold">
+                                        </label>
+                                    }
+                                </div>
+
+
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">@Resources.SharedClose</button>
+                        <button id="saveOptions" type="button" class="btn btn-primary">@Resources.SharedSave</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="emgOptions" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">@Resources.PatientEMG</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form id="emgForm" class="form-horizontal" role="form">
+                            <div class="form-group">
+                                <label class="col-md-offset-1 col-md-4 control-label">@Resources.PatientEnvelopeWindowSize</label>
+                                <div class="col-md-6 input-group bootstrap-touchspin">
+                                    <label>
+                                        <input id="envelopeWindowSize" type="text" value="0" name="envelopeWindowSize">
+                                    </label>
+                                </div>
+
+
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">@Resources.SharedClose</button>
+                        <button id="saveEMGOptions" type="button" class="btn btn-primary">@Resources.SharedSave</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="btn-group col-md-3 btn-vert-block">
+                    <div id="reset" class="btn btn-default"><i class="fa fa-undo"></i>&nbsp;@Resources.PatientReset</div>
+                    <div id="save" class="btn btn-default"><i class="fa fa-save"></i>&nbsp;@Resources.SharedSave</div>
+                </div>
+                <div id="muscles" class="btn-group col-md-4 btn-vert-block" data-toggle="buttons">
+                    <label style="float:left;margin-right:5px; padding-top:7px; font-weight: normal;">@Resources.PatientMuscle </label>
+                    @foreach (var item in Model.Muscles)
+                    {
+
+                        <div id="@item.Acronym" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="@item.Name">
+                            <label>
+                                <input type="radio">
+                                <span>@item.Acronym@(string.IsNullOrEmpty(item.Side) ? string.Empty : " "+item.Side)</span>
+                            </label>
+                        </div>
+                    }
+                </div>
+                <div class="btn-group col-md-5 btn-vert-block">
+                    <div id="reportrange" class="btn btn-default dropdown-toggle pull-right">
+                        <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
+                        <span></span> <b class="caret"></b>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row voffset3">
+                <div class="col-md-4 col-sm-4">
+                    <div class="box ui-draggable ui-droppable">
+                        <div class="box-header">
+                            <div class="box-name">
+                                <i class="fa fa-calendar"></i>
+                                <span>@Resources.PatientQuarter</span>
+                            </div>
+                            <div class="box-icons">
+                                <a class="reset" href="javascript:void(0);" onclick="javascript:alsglance.charts.quarterChart.filterAll();dc.redrawAll();"><i class="fa fa-undo"></i></a>
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                                <a class="expand-link">
+                                    <i class="fa fa-expand"></i>
+                                </a>
+                                <a class="close-link">
+                                    <i class="fa fa-times"></i>
+                                </a>
+                            </div>
+                            <div class="no-move"></div>
+                        </div>
+                        <div class="box-content" style="height: 250px; position: relative;" data-step="1" data-intro="@Resources.PatientTip1" data-position='right'>
+                            <div style="height: 220px; position: relative;" id="quarterChart" class="dc-chart">
+                                <div class="clearfix"></div>
+                                <div class="loading">@Resources.PatientLoading</div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-4">
+                    <div class="box ui-draggable ui-droppable">
+                        <div class="box-header">
+                            <div class="box-name">
+                                <i class="fa fa-sun-o"></i>
+                                <span>@Resources.PatientTimeOfDay</span>
+                            </div>
+                            <div class="box-icons">
+                                <a class="reset" href="javascript:void(0);" onclick="javascript:alsglance.charts.timeOfDayChart.filterAll();dc.redrawAll();"><i class="fa fa-undo"></i></a>
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                                <a class="expand-link">
+                                    <i class="fa fa-expand"></i>
+                                </a>
+                                <a class="close-link">
+                                    <i class="fa fa-times"></i>
+                                </a>
+                            </div>
+                            <div class="no-move"></div>
+                        </div>
+                        <div class="box-content" style="height: 250px; position: relative;" data-step="2" data-intro="@Resources.PatientTip2" data-position='right'>
+                            <div style="height: 250px; position: relative;" id="timeOfDayChart" class="dc-chart">
+                                <div class="clearfix"></div>
+                                <div class="loading">@Resources.PatientLoading</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-4">
+                    <div class="box ui-draggable ui-droppable">
+                        <div class="box-header">
+                            <div class="box-name">
+                                <i class="fa fa-clock-o"></i>
+                                <span>@Resources.PatientHour</span>
+                            </div>
+                            <div class="box-icons">
+                                <a class="reset" href="javascript:void(0);" onclick="javascript:alsglance.charts.timeHourChart.filterAll();dc.redrawAll();"><i class="fa fa-undo"></i></a>
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                                <a class="expand-link">
+                                    <i class="fa fa-expand"></i>
+                                </a>
+                                <a class="close-link">
+                                    <i class="fa fa-times"></i>
+                                </a>
+                            </div>
+                            <div class="no-move"></div>
+                        </div>
+                        <div class="box-content" style="height: 250px; position: relative;">
+                            <div style="height: 250px; position: relative;" id="timeHourChart" class="dc-chart" data-step="3" data-intro="@Resources.PatientTip3" data-position='top'>
+                                <div class="clearfix"></div>
+                                <div class="loading">@Resources.PatientLoading</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6">
+                    <div class="box ui-draggable ui-droppable">
+                        <div class="box-header">
+                            <div class="box-name">
+                                <i class="fa fa-calendar"></i>
+                                <span>AUC</span>
+                            </div>
+                            <div class="box-icons">
+                                <a data-toggle="modal" data-target="#aucOptions" data-step="4" data-intro="@Resources.PatientTip4" data-position='top'>
+                                    <i class="fa fa-gears"></i>
+                                </a>
+                                <a class="reset" href="javascript:void(0);" onclick="javascript:alsglance.charts.aucSeriesChart.filterAll();alsglance.charts.dateRangeChart.filterAll();dc.redrawAll();"><i class="fa fa-undo"></i></a>
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                                <a class="expand-link">
+                                    <i class="fa fa-expand"></i>
+                                </a>
+                                <a class="close-link">
+                                    <i class="fa fa-times"></i>
+                                </a>
+                            </div>
+                            <div class="no-move"></div>
+                        </div>
+                        <div class="box-content" style="height: 250px; position: relative;">
+                            <div style="height: 100%; width: 100%; position: relative;">
+                                <div id="predictionSeriesChart" class="dc-chart">
+                                    <div class="clearfix"></div>
+                                    <div class="loading">@Resources.PatientLoading</div>
+                                </div>
+                                <div id="dateRangeChart" class="dc-chart" data-step="5" data-intro="@Resources.PatientTip5" data-position='top'>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                    <div class="box ui-draggable ui-droppable">
+                        <div class="box-header">
+                            <div class="box-name">
+                                <i class="fa fa-stethoscope"></i>
+                                <span>@Resources.PatientEMG</span>
+                            </div>
+                            <div class="box-icons">
+                                <a class="envelope" href="javascript:void(0);" onclick="javascript:alsglance.dashboard.patient.toggleEmgEnvelope();alsglance.dashboard.patient.renderEmg();" data-step="7" data-intro="@Resources.PatientTip7" data-position='left'><i class="fa fa-exchange"></i></a>
+                                <a data-toggle="modal" data-target="#emgOptions">
+                                    <i class="fa fa-gears"></i>
+                                </a>
+                                <a class="reset" href="javascript:void(0);" onclick="javascript:alsglance.charts.emgChart.resetZoom();" data-step="8" data-intro="@Resources.PatientTip8" data-position='left'><i class="fa fa-undo"></i></a>
+                                <a class="collapse-link" data-step="9" data-intro="@Resources.PatientTip9" data-position='left'>
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                                <a class="expand-link" data-step="10" data-intro="@Resources.PatientTip10" data-position='left'>
+                                    <i class="fa fa-expand"></i>
+                                </a>
+                                <a class="close-link" data-step="11" data-intro="@Resources.PatientTip11" data-position='left'>
+                                    <i class="fa fa-times"></i>
+                                </a>
+                            </div>
+                            <div class="no-move"></div>
+                        </div>
+
+                        <div class="box-content" style="height: 250px; position: relative;">
+                            <div style="height: 100%; width: 100%; position: relative;" id='emgChart' data-step="6" data-intro="@Resources.PatientTip3" data-position='top'>
+                                <div class="clearfix"></div>
+                                <div class="loadingEmg">@Resources.PatientLoading</div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="details">
+        <div class="container">
+            <div class="row">
+                <div>
+                    <div id="dc-data-count" class="dc-chart">@Resources.PatientAllSelected</div>
+                </div>
+                <table id="dc-data-table" class="table table-hover" style="margin-top: 40px"></table>
+                <span id="top-link-block" class="hidden">
+                    <a href="#top" class="well well-sm" onclick="$('html,body').animate({scrollTop:0},'slow');return false;">
+                        <i class="glyphicon glyphicon-chevron-up"></i> @Resources.PatientBackToTop
+                    </a>
+                </span><!-- /top-link-block -->
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/commonjs")
+    @Scripts.Render("~/bundles/patientjs")
+    @Scripts.Render("~/Home/ApiAuth")
+    <script>
+        $(function() {
+            alsglance.resources = alsglance.resources || {
+                hour: '@Resources.PatientHour',
+                timeOfDay: '@Resources.PatientTimeOfDay',
+                muscle: '@Resources.PatientMuscle',
+                someSelectedMessage: '@Html.Raw(Resources.PatientSomeSelected)',
+                allSelectedMessage: '@Resources.PatientAllSelected',
+                loadingMessage: '@Resources.PatientLoading',
+                saveMessage: '@Resources.PatientSaveMessage',
+                quarterPrefix: '@Resources.PatientQuarterPrefix',
+                measurements: '@Html.Raw(Resources.PatientMeasurements)',
+                name: '@Resources.SharedName',
+                date: '@Resources.SharedDate',
+                help: '@Resources.Help',
+                colorSchemes: '@Resources.PatientColorSchemes',
+                time: '@Resources.PatientTime',
+                muscleFailure: '@Resources.PatientMuscleFailure',
+                shortMonths: @Html.Raw(Resources.SharedShortMonths),
+                shortDays: @Html.Raw(Resources.SharedShortDays),
+                months: @Html.Raw(Resources.SharedMonths),
+                prediction: '@Html.Raw(Resources.PatientPrediction)',
+            };
+            alsglance.dashboard.patient.id = @Model.Keycol;
+            alsglance.dashboard.patient.yearMin = @Model.YearMin;
+            alsglance.dashboard.patient.yearMax = @Model.YearMax;
+            alsglance.presentation.showPatientHelpButton();
+            alsglance.presentation.makePanelsDraggable(); //has to be before trying to set panels position
+            var settings = {};
+            try {
+                settings = JSON.parse(decodeURIComponent('@Html.Raw(Model.VersionedSettings.Item2)'));
+            } catch (err) {
+            }
+            alsglance.dashboard.patient.loadSettings(settings);
+            alsglance.dashboard.patient.etag = '@Html.Raw(Model.VersionedSettings.Item1)';
+            alsglance.dashboard.patient.loadFacts();
+            alsglance.presentation.bindButtonEvents();
+            $('[data-toggle="tooltip"]').tooltip();
+            $("input[name='muscleThreshold']").TouchSpin({
+                min: 0,
+                max: 0.030,
+                step: 0.001,
+                decimals: 3,
+                boostat: 5,
+                maxboostedstep: 10
+            });
+            $("input[name='envelopeWindowSize']").TouchSpin({
+                min: 2,
+                max: 100,
+                step: 1,
+                decimals: 0,
+                boostat: 5,
+                maxboostedstep: 10
+            });
+        });
+    </script>
+}
+
+

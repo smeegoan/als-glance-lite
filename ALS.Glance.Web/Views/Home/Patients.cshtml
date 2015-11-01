@@ -1,0 +1,63 @@
+﻿@using ALS.Glance.Web.Resources
+@model ALS.Glance.Web.Models.PatientsViewModel
+
+@{
+    ViewBag.Title = Resources.SharedPatients;
+}
+
+<h2>@ViewBag.Title</h2>
+<div class="container-fluid">
+    <div class="row">
+        <div style="height: 200px; position: relative;">
+            <div id="aucBubbleChart" class="dc-chart" data-step="1" data-intro="@Resources.PatientsTip1" data-position='bottom'>
+                <div class="loading">@Resources.PatientLoading</div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <table class="table" id="patients">
+            <thead>
+                <tr>
+                    <th>
+                        @Resources.PatientsPatientId
+                    </th>
+                    <th>
+                        @Resources.PatientsBornOn
+                    </th>
+                    <th>
+                        @Resources.PatientsDiagnosedOn
+                    </th>
+                    <th>
+                        @Resources.SharedName
+                    </th>
+                    <th>
+                        @Resources.PatientsSex
+                    </th>
+                    <th>@Resources.PatientResume</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+@section Scripts {
+    @Scripts.Render("~/bundles/datatablejs")
+    @Scripts.Render("~/bundles/commonjs")
+    @Scripts.Render("~/Home/ApiAuth")
+
+    <script>
+        $(function () {
+            alsglance.resources = alsglance.resources || {
+                loadingMessage: '@Resources.PatientLoading',
+                patientsXAxisLabel: '@Html.Raw(Resources.PatientsXAxisLabel)',
+                patientsYAxisLabel: '@Html.Raw(Resources.PatientsYAxisLabel)',
+                help: '@Resources.Help',
+                patientsTip2: '@Resources.PatientsTip2',
+                patientsTip3: '@Resources.PatientsTip3',
+                dataTables: @Html.Raw(Resources.SharedDataTables),
+                patientLink: '@Url.Action("Patients", "Home")/'
+            };
+            alsglance.dashboard.patients.loadFacts(@Model.AgeMin,@Model.AgeMax);
+        });
+    </script>
+}

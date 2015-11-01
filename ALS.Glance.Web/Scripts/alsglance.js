@@ -479,7 +479,7 @@ alsglance.dashboard.patient = alsglance.dashboard.patient || {
     loadFacts: function () {
         //var then = moment();
         //$.when(alsglance.apiClient.get("Fact?$select=AUC&$expand=Time($select=Hour,TimeOfDay),Date($select=Date,Year,MonthName,Quarter),Patient,Muscle($select=Name,Acronym)&$filter=Patient/Keycol eq " + alsglance.dashboard.patient.id))
-        $.when(alsglance.apiClient.get("FactEmgs?$expand=DimMuscleDetails,DimDateDetails,DimTimeDetails&$filter=PatientKeycol eq " + alsglance.dashboard.patient.id))
+        $.when(alsglance.apiClient.get("FactEmgs?$expand=DimPatientDetails,DimMuscleDetails,DimDateDetails,DimTimeDetails&$filter=PatientKeycol eq " + alsglance.dashboard.patient.id))
         //$.when(alsglance.apiClient.get("Facts?$filter=PatientId eq " + alsglance.dashboard.patient.id))
             .then(function (data) {
                 //    data = alsglance.dashboard.patient.addPredictions(JSON.flatten(data));
@@ -760,7 +760,10 @@ alsglance.dashboard.patient = alsglance.dashboard.patient || {
             d.DateDate = date;
             d.MuscleAbbreviation = d.DimMuscleDetails.Acronym;
             d.AUC = d.Area;
+            d.PatientName = d.DimPatientDetails.Name;
+            d.TimeHour = d.DimTimeDetails.Hour24;
             d.DateQuarter = d.DimDateDetails.Quarter;
+            d.TimeTimeOfDay = d.DimTimeDetails[alsglance.resources.timeOfDayKey];
             d.DateMonthInYear = d3.time.month(d.DateDate); // pre-calculate month for better performance
         });
 
@@ -919,7 +922,7 @@ alsglance.dashboard.patient = alsglance.dashboard.patient || {
             //.height(160)
             //.chart(function(c) { return dc.lineChart(c).interpolate('basis'); })
             .x(d3.time.scale().domain([new Date(alsglance.dashboard.patient.yearMin, 0, 1), alsglance.dashboard.patient.maxDate()]))
-            .y(d3.scale.linear().domain([0.009, 0.03]))
+            .y(d3.scale.linear().domain([9, 40]))
             .brushOn(false)
             //.yAxisLabel("")
             //.xAxisLabel("Date")

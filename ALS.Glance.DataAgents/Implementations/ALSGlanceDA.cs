@@ -55,7 +55,11 @@ namespace ALS.Glance.DataAgents.Implementations
 
         public virtual async Task<YearBounds> GetYearBoundsAsync(WebApiCredentials credentials, long id, CancellationToken ct)
         {
-            return new YearBounds();
+            return new YearBounds
+            {
+                Max = 2015,
+                Min = 2013,
+            };
             return await new ODataClient(credentials.ToSettings().WithUrl(_apiUrl))
                 .Unbound<YearBounds>()
                 .Function("GetYearBounds")

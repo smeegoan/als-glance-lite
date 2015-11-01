@@ -316,4 +316,7 @@
   <data name="PatientEnvelopeWindowSize" xml:space="preserve">
     <value>Tamanho da janela da envolvente:</value>
   </data>
+  <data name="PatientTimeOfDayKey" xml:space="preserve">
+    <value>PeriodPt</value>
+  </data>
 </root>

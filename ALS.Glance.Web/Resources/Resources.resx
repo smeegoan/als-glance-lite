@@ -303,4 +303,7 @@
   <data name="PatientEnvelopeWindowSize" xml:space="preserve">
     <value>Envelope window size:</value>
   </data>
+  <data name="PatientTimeOfDayKey" xml:space="preserve">
+    <value>PeriodEn</value>
+  </data>
 </root>

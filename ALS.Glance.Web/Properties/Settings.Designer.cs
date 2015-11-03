@@ -43,15 +43,6 @@ namespace ALS.Glance.Web.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://alsmon.adeetc.e.ipl.pt:8443/ODataDAL/DW.svc/")]
-        public string ApiUrl {
-            get {
-                return ((string)(this["ApiUrl"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("ALS Glance")]
         public string ApplicationId {
             get {
@@ -83,6 +74,15 @@ namespace ALS.Glance.Web.Properties {
         public bool ResponseCacheEnabled {
             get {
                 return ((bool)(this["ResponseCacheEnabled"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://alsmon.adeetc.e.ipl.pt:8443/ODataDAL/DW.svc/")]
+        public string ApiUrl {
+            get {
+                return ((string)(this["ApiUrl"]));
             }
         }
     }

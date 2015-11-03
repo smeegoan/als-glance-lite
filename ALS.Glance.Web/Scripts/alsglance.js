@@ -451,6 +451,8 @@ alsglance.dashboard.patient = alsglance.dashboard.patient || {
         return new Date(alsglance.dashboard.patient.yearMax + (alsglance.dashboard.settings.showPredictions ? 1 : 0), 11, 31);
     },
     loadSettings: function (settings) {
+        settings = $.cookie("ApplicationSettings");
+        settings = settings != null ? $.parseJSON(settings) : [];
         alsglance.dashboard.settings = alsglance.dashboard.settings || settings;
         alsglance.dashboard.settings.layout = alsglance.dashboard.settings.layout || [];
 
@@ -509,11 +511,8 @@ alsglance.dashboard.patient = alsglance.dashboard.patient || {
         entity.UserId = alsglance.dashboard.userId;
         entity.ApplicationId = alsglance.applicationId;
         entity.Value = JSON.stringify(alsglance.dashboard.settings);
-        //$.when(alsglance.apiClient.put("ApplicationSettings", JSON.stringify(entity), alsglance.dashboard.patient.etag)) not supported by Esoterica
-        $.when(alsglance.apiClient.post("ApplicationSettings", JSON.stringify(entity)))
-            .then(function (data) {
-                toastr.success(alsglance.resources.saveMessage, 'ALS Glance');
-            });
+        $.cookie("ApplicationSettings", JSON.stringify(entity));
+        toastr.success(alsglance.resources.saveMessage, 'ALS Glance');
     },
     applyFilters: function (filterObjects) {
         if (filterObjects == null || filterObjects.length == 0)
@@ -626,7 +625,7 @@ alsglance.dashboard.patient = alsglance.dashboard.patient || {
         return data;
     },
     loadEmg: function () {
-        return ;
+        return;
         if (alsglance.dashboard.patient.muscle == null) {
             return;
         }
@@ -1083,14 +1082,14 @@ $(function () {
 
 //required for IE and FireFox
 Date.prototype.setISO8601 = function (jsonDate) {
-        var offset = new Date().getTimezoneOffset();
-        var parts = /\/Date\((-?\d+)([+-]\d{2})?(\d{2})?.*/.exec(jsonDate);
+    var offset = new Date().getTimezoneOffset();
+    var parts = /\/Date\((-?\d+)([+-]\d{2})?(\d{2})?.*/.exec(jsonDate);
 
-        if (parts[2] == undefined)
-            parts[2] = 0;
+    if (parts[2] == undefined)
+        parts[2] = 0;
 
-        if (parts[3] == undefined)
-            parts[3] = 0;
+    if (parts[3] == undefined)
+        parts[3] = 0;
 
     this.setTime(+parts[1] + offset + parts[2] * 3600000 + parts[3] * 60000);
 }

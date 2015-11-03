@@ -8,9 +8,6 @@
     <Setting Name="Password" Type="System.String" Scope="Application">
       <Value Profile="(Default)">Alsmisel2015</Value>
     </Setting>
-    <Setting Name="ApiUrl" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">https://alsmon.adeetc.e.ipl.pt:8443/ODataDAL/DW.svc/</Value>
-    </Setting>
     <Setting Name="ApplicationId" Type="System.String" Scope="Application">
       <Value Profile="(Default)">ALS Glance</Value>
     </Setting>
@@ -22,6 +19,9 @@
     </Setting>
     <Setting Name="ResponseCacheEnabled" Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="ApiUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">https://alsmon.adeetc.e.ipl.pt:8443/ODataDAL/DW.svc/</Value>
     </Setting>
   </Settings>
 </SettingsFile>

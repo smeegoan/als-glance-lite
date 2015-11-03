@@ -35,6 +35,7 @@ namespace ALS.Glance.Web
 
             bundles.Add(new ScriptBundle("~/bundles/patientjs").Include(
                  "~/Scripts/regression.js",
+                "~/Scripts/jquery.cookie.js", 
                 "~/Scripts/daterangepicker.js",
                 "~/Scripts/colorbrewer.js",
                 "~/Scripts/colorbrewer_schemes.js",

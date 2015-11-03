@@ -13,10 +13,10 @@ namespace ALS.Glance.DataAgents
             {
                 Credentials = new NetworkCredential(credentials.UserName,
                     credentials.Password),
-                BeforeRequest = (r) => {
-                    r.Headers.Accept.Clear();
-                    r.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-                    r.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/xml"));
+                BeforeRequest = requestMessage => {
+                    requestMessage.Headers.Accept.Clear();
+                    requestMessage.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+                    requestMessage.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/xml"));
                 }
             };
             return settings;

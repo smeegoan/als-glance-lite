@@ -3,15 +3,23 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ALS.Glance.Web", "ALS.Glance.Web\ALS.Glance.Web.csproj", "{F911E14C-7ACD-49B7-A0F0-FFAEB4808F84}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 Presentation", "1 Presentation", "{57DD5ADD-08B0-4916-B639-9A53749300A2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2 Services", "2 Services", "{95E150AA-0725-4D72-8D48-3D7FA3FB3498}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3 Data", "3 Data", "{C63D0489-0AB2-4673-9EC7-2D8AD2C7B43C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ALS.Glance.DataAgents", "ALS.Glance.DataAgents\ALS.Glance.DataAgents.csproj", "{CE7D995D-8B58-47D4-B56E-3F400D20A9C5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ALS.Glance.DataAgents.Core", "ALS.Glance.DataAgents.Core\ALS.Glance.DataAgents.Core.csproj", "{94A45480-3790-43CB-B0B8-D24FDF37E8F7}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4 Shared", "4 Shared", "{C774E83E-3EAB-4853-88C7-068CCFFBA1A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ALS.Glance.Models.Core", "ALS.Glance.Models.Core\ALS.Glance.Models.Core.csproj", "{92267138-BA91-46D9-B917-5553904E993E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ALS.Glance.Core", "ALS.Glance.Core\ALS.Glance.Core.csproj", "{45ABCAFA-F6A1-434E-9F3E-7840D44C9C38}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ALS.Glance.Models", "ALS.Glance.Models\ALS.Glance.Models.csproj", "{B2301A90-9A98-4C32-A5A3-A09EDE74C328}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{61984A29-175B-48B5-A0C4-065ACAFD2026}"
 	ProjectSection(SolutionItems) = preProject
@@ -20,15 +28,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{61984A
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ALS.Glance.DataAgents", "ALS.Glance.DataAgents\ALS.Glance.DataAgents.csproj", "{CE7D995D-8B58-47D4-B56E-3F400D20A9C5}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ALS.Glance.DataAgents.Core", "ALS.Glance.DataAgents.Core\ALS.Glance.DataAgents.Core.csproj", "{94A45480-3790-43CB-B0B8-D24FDF37E8F7}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ALS.Glance.Models.Core", "ALS.Glance.Models.Core\ALS.Glance.Models.Core.csproj", "{92267138-BA91-46D9-B917-5553904E993E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ALS.Glance.Core", "ALS.Glance.Core\ALS.Glance.Core.csproj", "{45ABCAFA-F6A1-434E-9F3E-7840D44C9C38}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ALS.Glance.Models", "ALS.Glance.Models\ALS.Glance.Models.csproj", "{B2301A90-9A98-4C32-A5A3-A09EDE74C328}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ALS.Glance.Web", "ALS.Glance.Web\ALS.Glance.Web.csproj", "{F911E14C-7ACD-49B7-A0F0-FFAEB4808F84}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,10 +36,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F911E14C-7ACD-49B7-A0F0-FFAEB4808F84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F911E14C-7ACD-49B7-A0F0-FFAEB4808F84}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F911E14C-7ACD-49B7-A0F0-FFAEB4808F84}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F911E14C-7ACD-49B7-A0F0-FFAEB4808F84}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CE7D995D-8B58-47D4-B56E-3F400D20A9C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CE7D995D-8B58-47D4-B56E-3F400D20A9C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE7D995D-8B58-47D4-B56E-3F400D20A9C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -60,16 +56,20 @@ Global
 		{B2301A90-9A98-4C32-A5A3-A09EDE74C328}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B2301A90-9A98-4C32-A5A3-A09EDE74C328}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B2301A90-9A98-4C32-A5A3-A09EDE74C328}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F911E14C-7ACD-49B7-A0F0-FFAEB4808F84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F911E14C-7ACD-49B7-A0F0-FFAEB4808F84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F911E14C-7ACD-49B7-A0F0-FFAEB4808F84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F911E14C-7ACD-49B7-A0F0-FFAEB4808F84}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{F911E14C-7ACD-49B7-A0F0-FFAEB4808F84} = {57DD5ADD-08B0-4916-B639-9A53749300A2}
 		{CE7D995D-8B58-47D4-B56E-3F400D20A9C5} = {C63D0489-0AB2-4673-9EC7-2D8AD2C7B43C}
 		{94A45480-3790-43CB-B0B8-D24FDF37E8F7} = {C63D0489-0AB2-4673-9EC7-2D8AD2C7B43C}
 		{92267138-BA91-46D9-B917-5553904E993E} = {C774E83E-3EAB-4853-88C7-068CCFFBA1A2}
 		{45ABCAFA-F6A1-434E-9F3E-7840D44C9C38} = {C774E83E-3EAB-4853-88C7-068CCFFBA1A2}
 		{B2301A90-9A98-4C32-A5A3-A09EDE74C328} = {C774E83E-3EAB-4853-88C7-068CCFFBA1A2}
+		{F911E14C-7ACD-49B7-A0F0-FFAEB4808F84} = {57DD5ADD-08B0-4916-B639-9A53749300A2}
 	EndGlobalSection
 EndGlobal

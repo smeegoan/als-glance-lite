@@ -301,12 +301,6 @@
     <Content Include="Content\alsglance.css" />
     <Content Include="LICENSE.txt" />
     <Content Include="Scripts\alsglance.js" />
-    <Content Include="Scripts\alsglance.min.js">
-      <DependentUpon>alsglance.js</DependentUpon>
-    </Content>
-    <Content Include="Scripts\apiclient.min.js">
-      <DependentUpon>apiclient.js</DependentUpon>
-    </Content>
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="fonts\fontawesome-webfont.woff2" />
     <Content Include="fonts\fontawesome-webfont.woff" />
@@ -387,17 +381,11 @@
     <Content Include="Scripts\colorbrewer.min.js.map">
       <DependentUpon>colorbrewer.min.js</DependentUpon>
     </Content>
-    <Content Include="Scripts\apiclient.min.js.map">
-      <DependentUpon>apiclient.min.js</DependentUpon>
-    </Content>
     <EmbeddedResource Include="Resources\Resources.pt-PT.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.pt-PT.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Content Include="Scripts\alsglance.min.js.map">
-      <DependentUpon>alsglance.min.js</DependentUpon>
-    </Content>
     <Content Include="Scripts\bootstrap.min.js.map">
       <DependentUpon>bootstrap.min.js</DependentUpon>
     </Content>

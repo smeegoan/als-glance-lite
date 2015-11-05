@@ -394,7 +394,7 @@ alsglance.dashboard.patients = alsglance.dashboard.patients || {
             .group(ageGroup)
             .colors(['rgb(49,130,189)', 'rgb(247,104,161)']) // (optional) define color function or array for bubbles
             .colorAccessor(function (d) {
-                var res = d.key == "M" ? 0 : 1;
+                var res = d.key === "M" ? 0 : 1;
                 return res;
             })
             .keyAccessor(function (p) {
@@ -452,7 +452,7 @@ alsglance.dashboard.patient = alsglance.dashboard.patient || {
     },
     loadSettings: function (settings) {
         settings = $.cookie("ApplicationSettings");
-        settings = settings != null ? $.parseJSON(settings) : [];
+        settings = settings != null ? $.parseJSON($.parseJSON(settings).Value) : [];
         alsglance.dashboard.settings = alsglance.dashboard.settings || settings;
         alsglance.dashboard.settings.layout = alsglance.dashboard.settings.layout || [];
 
@@ -759,6 +759,8 @@ alsglance.dashboard.patient = alsglance.dashboard.patient || {
             d.DateDate = date;
             d.MuscleAbbreviation = d.DimMuscleDetails.Acronym;
             d.AUC = d.Area;
+            d.DateMonthName = d.DimDateDetails[alsglance.resources.monthNameKey];
+            d.DateYear = d.DimDateDetails.Year;
             d.PatientName = d.DimPatientDetails.Name;
             d.TimeHour = d.DimTimeDetails.Hour24;
             d.DateQuarter = d.DimDateDetails.Quarter;

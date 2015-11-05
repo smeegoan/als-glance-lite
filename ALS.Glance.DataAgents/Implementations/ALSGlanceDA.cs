@@ -53,18 +53,14 @@ namespace ALS.Glance.DataAgents.Implementations
             return result.GetAgeBounds;
         }
 
-        public virtual async Task<YearBounds> GetYearBoundsAsync(WebApiCredentials credentials, long id, CancellationToken ct)
-        {
-            return new YearBounds
-            {
-                Max = 2015,
-                Min = 2013,
-            };
-            return await new ODataClient(credentials.ToSettings().WithUrl(_apiUrl))
-                .Unbound<YearBounds>()
+        public virtual async Task<YearBounds> GetYearBoundsAsync(WebApiCredentials credentials, int id, CancellationToken ct)
+        { 
+            var result= await new ODataClient(credentials.ToSettings().WithUrl(_apiUrl))
+                .Unbound<D>()
                 .Function("GetYearBounds")
-               // .Set(new Entry {{"patientID", patientId}})
+                .Set(new {Keycol= id})
                 .ExecuteAsSingleAsync(ct);
+            return result.GetYearBounds;
         }
 
         public async Task<IEnumerable<DimMuscle>> GetMusclesAsync(WebApiCredentials credentials, CancellationToken ct)

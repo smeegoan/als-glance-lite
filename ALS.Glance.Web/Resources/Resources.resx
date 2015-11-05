@@ -306,4 +306,7 @@
   <data name="PatientTimeOfDayKey" xml:space="preserve">
     <value>PeriodEn</value>
   </data>
+  <data name="MonthNameKey" xml:space="preserve">
+    <value>MonthnameEn</value>
+  </data>
 </root>

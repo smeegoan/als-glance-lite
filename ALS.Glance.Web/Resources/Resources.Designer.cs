@@ -106,6 +106,15 @@ namespace ALS.Glance.Web.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to MonthnameEn.
+        /// </summary>
+        public static string MonthNameKey {
+            get {
+                return ResourceManager.GetString("MonthNameKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All records selected. Please click on the graph to apply filters..
         /// </summary>
         public static string PatientAllSelected {

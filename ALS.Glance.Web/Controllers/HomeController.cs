@@ -83,17 +83,7 @@ namespace ALS.Glance.Web.Controllers
                 };
                 cache.SetValue(Request, patientModel);
             }
-            //var settings = await _glanceDa.GetSettingsAsync(_credentials, User.Identity.GetUserId(), ct);
-            //if (settings != null)
-            //{
-            //    var etag = "W/\"" + EncodeInBase64(string.Format("binary'{0}'",
-            //        Convert.ToBase64String(settings.Version, 0, settings.Version.Length))) + "\"";
-            //    patientModel.VersionedSettings = new Tuple<string, string>(etag, settings.Value);
-            //}
-            //else
-            {
-                patientModel.VersionedSettings = new Tuple<string, string>(string.Empty, "{}");
-            }
+            patientModel.VersionedSettings = new Tuple<string, string>(string.Empty, "{}");
             return View("Patient", patientModel);
         }
         #region Private Methods
@@ -119,8 +109,8 @@ namespace ALS.Glance.Web.Controllers
 
             var model = new PatientsViewModel
             {
-                AgeMax = ageBounds.Max.ToString(System.Globalization.CultureInfo.InvariantCulture),
-                AgeMin = ageBounds.Min.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                AgeMax = Math.Ceiling(ageBounds.Max).ToString(System.Globalization.CultureInfo.InvariantCulture),
+                AgeMin = Math.Floor(ageBounds.Min).ToString(System.Globalization.CultureInfo.InvariantCulture),
             };
             return View(model);
         }

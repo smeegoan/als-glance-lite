@@ -61,11 +61,11 @@
                             <div class="form-group">
                                 <label class="col-md-offset-1 col-md-3 control-label">@Resources.PatientMuscle:</label>
                                 <div class="col-md-7 input-group bootstrap-touchspin">
-                                    @foreach (var item in Model.Muscles)
+                                    @foreach (var item in Model.Muscles.Select(e=>e.Acronym).Distinct())
                                     {
                                         <label>
-                                            <span class="col-md-2">@item.Acronym</span>
-                                            <input class="col-md-2" id="@(item.Acronym)_Threshold" type="text" value="0" name="muscleThreshold">
+                                            <span class="col-md-2">@item</span>
+                                            <input class="col-md-2" id="@(item)_Threshold" type="text" value="0" name="muscleThreshold">
                                         </label>
                                     }
                                 </div>
@@ -120,7 +120,7 @@
                     @foreach (var item in Model.Muscles)
                     {
 
-                        <div id="@item.Acronym" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="@item.Name">
+                        <div id="@item.Acronym" data-keycol="@item.Keycol" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="@item.Name">
                             <label>
                                 <input type="radio">
                                 <span>@item.Acronym@(string.IsNullOrEmpty(item.Side) ? string.Empty : " "+item.Side)</span>
@@ -367,9 +367,9 @@
             $('[data-toggle="tooltip"]').tooltip();
             $("input[name='muscleThreshold']").TouchSpin({
                 min: 0,
-                max: 0.030,
-                step: 0.001,
-                decimals: 3,
+                max: 30,
+                step: 1,
+                decimals: 1,
                 boostat: 5,
                 maxboostedstep: 10
             });

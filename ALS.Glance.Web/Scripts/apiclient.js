@@ -32,6 +32,18 @@ alsglance.ApiClientImpl = function (config) {
         });
     };
 
+    this.getIgnoringErrors = function (path, query) {
+        return $.ajax({
+            url: this.createUri(path),
+            type: "GET",
+            headers: {
+                Accept: "application/json; charset=utf-8",
+                "Content-Type": "application/json; charset=utf-8"
+            },
+            beforeSend: configureRequest,
+        });
+    };
+
     this.post = function (path, data) {
 
         return $.ajax({

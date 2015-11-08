@@ -234,9 +234,9 @@ alsglance.presentation = alsglance.presentation || {
             alsglance.dashboard.patient.renderEmg();
         });
         $.each($('#muscles .btn'), function (index, value) {
-            var id = $(value).attr('id');
-            $(value).click(id, function () {
-                alsglance.dashboard.patient.filterMuscle(id);
+            var keycol = $(value).data('keycol');
+            $(value).click(keycol, function () {
+                alsglance.dashboard.patient.filterMuscle(keycol);
                 dc.redrawAll();
                 analytics.logUiEvent("filterMuscle", "Patient", "dashboard");
             });
@@ -458,8 +458,8 @@ alsglance.dashboard.patient = alsglance.dashboard.patient || {
 
         if (alsglance.dashboard.settings.envelopeWindowSize == null) {
             alsglance.dashboard.settings.showPredictions = alsglance.dashboard.settings.showFailureThreshold = true;
-            alsglance.dashboard.settings.atThreshold = alsglance.dashboard.settings.fcrThreshold = 0.018;
-            alsglance.dashboard.settings.scmThreshold = 0.013;
+            alsglance.dashboard.settings.atThreshold = alsglance.dashboard.settings.fcrThreshold = 18;
+            alsglance.dashboard.settings.scmThreshold = 13;
             alsglance.dashboard.settings.envelopeWindowSize = 15;
         }
         $('#showPredictions').prop('checked', alsglance.dashboard.settings.showPredictions);
@@ -484,9 +484,22 @@ alsglance.dashboard.patient = alsglance.dashboard.patient || {
         $.when(alsglance.apiClient.get("FactEmgs?$expand=DimPatientDetails,DimMuscleDetails,DimDateDetails,DimTimeDetails&$filter=PatientKeycol eq " + alsglance.dashboard.patient.id))
         //$.when(alsglance.apiClient.get("Facts?$filter=PatientId eq " + alsglance.dashboard.patient.id))
             .then(function (data) {
-                //    data = alsglance.dashboard.patient.addPredictions(JSON.flatten(data));
-                data = alsglance.dashboard.patient.addPredictions(data.d.results);
-                //      console.log(moment.duration(moment().diff(then)));
+                data = data.d.results;
+                data.forEach(function (d) {
+                    d.MuscleAbbreviation = d.DimMuscleDetails.Acronym;
+                    d.AUC = parseFloat(d.Area);
+                    d.DateMonthName = d.DimDateDetails[alsglance.resources.monthNameKey];
+                    d.DateYear = d.DimDateDetails.Year;
+                    d.PatientName = d.DimPatientDetails.Name;
+                    d.TimeHour = d.DimTimeDetails.Hour24;
+                    d.DateQuarter = d.DimDateDetails.Quarter;
+                    d.MuscleKeycol = d.DimMuscleDetails.Keycol;
+                    var date = new Date();
+                    date.setISO8601(d.DimDateDetails.DateIso);
+                    d.DateDate = date;
+                    d.TimeTimeOfDay = d.DimTimeDetails[alsglance.resources.timeOfDayKey];
+                });
+                data = alsglance.dashboard.patient.addPredictions(data);
 
                 alsglance.dashboard.patient.load(data);
                 colorbrewer.showColorSchemeButton(alsglance.dashboard.settings.colorScheme); //has to be called after the charts have been created
@@ -552,19 +565,17 @@ alsglance.dashboard.patient = alsglance.dashboard.patient || {
         alsglance.dashboard.patient.lastUrl = null;
         dc.filterAll();
         alsglance.dashboard.patient.datePicker();
-        alsglance.dashboard.patient.filterMuscle("AT");
+        alsglance.dashboard.patient.filterMuscle("1");
         dc.redrawAll();
         if (alsglance.charts.emgChart != null) {
             alsglance.charts.emgChart.resetZoom();
         }
     },
-    filterMuscle: function (muscle) {
-        $('#AT').removeClass("active");
-        $('#FCR').removeClass("active");
-        $('#SCM').removeClass("active");
-        $('#' + muscle).addClass("active");
+    filterMuscle: function (keycol) {
+        $("#muscles .active").removeClass("active");
+        $("#muscles [data-keycol='"+keycol+"']").addClass("active");
         alsglance.charts.muscleChart.filterAll();
-        alsglance.charts.muscleChart.filter([muscle]);
+        alsglance.charts.muscleChart.filter([keycol]);
     },
     addPredictions: function (data) {
         if (!alsglance.dashboard.settings.showFailureThreshold && !alsglance.dashboard.settings.showPredictions) {
@@ -572,28 +583,32 @@ alsglance.dashboard.patient = alsglance.dashboard.patient || {
         }
 
         var muscles = [];
+        var muscleAcronyms = [];
         var lastDate = moment(data[data.length - 1].DateDate);
+
         data.forEach(function (entry) {
             if (lastDate.diff(entry.DateDate, 'months') <= alsglance.dashboard.settings.predictionBackLog) {
 
-                if (muscles[entry.MuscleAbbreviation] == null)
-                    muscles[entry.MuscleAbbreviation] = [];
-                if (muscles[entry.MuscleAbbreviation][entry.TimeTimeOfDay] == null)
-                    muscles[entry.MuscleAbbreviation][entry.TimeTimeOfDay] = [];
-                muscles[entry.MuscleAbbreviation][entry.TimeTimeOfDay].push([new Date(entry.DateDate).getTime(), entry.AUC]);
+                if (muscles[entry.MuscleKeycol] == null) {
+                    muscles[entry.MuscleKeycol] = [];
+                    muscleAcronyms[entry.MuscleKeycol] = entry.DimMuscleDetails.Acronym;
+                }
+                if (muscles[entry.MuscleKeycol][entry.TimeTimeOfDay] == null)
+                    muscles[entry.MuscleKeycol][entry.TimeTimeOfDay] = [];
+                muscles[entry.MuscleKeycol][entry.TimeTimeOfDay].push([new Date(entry.DateDate).getTime(), entry.AUC]);
             }
         });
-        for (var muscle in muscles) {
+        for (var muscleKeycol in muscles) {
             var auc;
-            if (muscle == "FCR")
+            if (muscleAcronyms[muscleKeycol] == "FCR")
                 auc = alsglance.dashboard.settings.fcrThreshold;
-            else if (muscle == "SCM") {
+            else if (muscleAcronyms[muscleKeycol] == "SCM") {
                 auc = alsglance.dashboard.settings.scmThreshold;
             } else {
                 auc = alsglance.dashboard.settings.atThreshold;
             }
-            for (var timeOfDay in muscles[muscle]) {
-                var measurements = muscles[muscle][timeOfDay];
+            for (var timeOfDay in muscles[muscleKeycol]) {
+                var measurements = muscles[muscleKeycol][timeOfDay];
                 var equation = regression('linear', measurements).equation;
                 var startDate = moment(measurements[0][0]);
                 var predictionMonths = moment(alsglance.dashboard.patient.maxDate()).diff(startDate, 'months');
@@ -601,13 +616,14 @@ alsglance.dashboard.patient = alsglance.dashboard.patient || {
                     startDate = startDate.add(1, "months");
                     var ticks = startDate.valueOf();
                     var prediction = {
-                        DateDate: startDate.format("YYYY-MM-DD HH:mm"),
+                        DateDate: new Date(moment(startDate.format("YYYY-MM-DD HH:mm")).valueOf()),
                         AUC: equation[0] * ticks + equation[1],
                         DateMonthName: startDate.format("MMMM"),
                         DateYear: parseInt(startDate.format("YYYY")),
                         DateQuarter: startDate.quarter(),
                         PatientName: alsglance.resources.prediction,
-                        MuscleAbbreviation: muscle,
+                        MuscleAbbreviation: muscleAcronyms[muscleKeycol],
+                        MuscleKeycol: muscleKeycol,
                         TimeTimeOfDay: timeOfDay
                     };
                     if (alsglance.dashboard.settings.showFailureThreshold) {
@@ -625,7 +641,6 @@ alsglance.dashboard.patient = alsglance.dashboard.patient || {
         return data;
     },
     loadEmg: function () {
-        return;
         if (alsglance.dashboard.patient.muscle == null) {
             return;
         }
@@ -637,20 +652,19 @@ alsglance.dashboard.patient = alsglance.dashboard.patient || {
             return " and (" + filter + ")";
         };
         //var url = "Facts?$top=1&$select=EMG&$filter=PatientId%20eq%20" + alsglance.dashboard.patient.id + " and EMG ne null " +
-        var url = "FactEmgs?$top=1&$select=EMG&$expand=EMG($select=Data)&$filter=Patient/Keycol%20eq%20" + alsglance.dashboard.patient.id + " and EMG ne null " +
-        " and Muscle/Acronym eq '" + alsglance.dashboard.patient.muscle + "' " +
-        (alsglance.dashboard.patient.timeOfDay != null ? timeOfDayFilter(alsglance.dashboard.patient.timeOfDay) : "") +
-        (alsglance.dashboard.patient.endDate != null ? " and Date/Date le " + alsglance.dashboard.patient.endDate.format('YYYY-MM-DDTHH:mm') + "%2B00:00&$orderby=Date/Date desc" : "");
+        var url = "GetEMGData?PKeycol=" + alsglance.dashboard.patient.id + "&MKeycol=" + $("#muscles .active").data("keycol") +
+//        (alsglance.dashboard.patient.timeOfDay != null ? timeOfDayFilter(alsglance.dashboard.patient.timeOfDay) : "") + 
+        (alsglance.dashboard.patient.endDate != null ? "&Date='" + alsglance.dashboard.patient.endDate.format('YYYY-MM-DD') + "'" : "");
         if (url == alsglance.dashboard.patient.lastUrl) {
             return;
         }
         alsglance.dashboard.patient.lastUrl = url;
-        $.when(alsglance.apiClient.get(url))
+        $.when(alsglance.apiClient.getIgnoringErrors(url))
             .then(function (facts) {
-                var value = facts.value;
+                var value = facts.d.GetEMGData;
                 alsglance.charts.emgData = null;
                 if (value != null && value.length > 0) {
-                    alsglance.charts.emgData = JSON.parse(value[0].EMG.Data);
+                    alsglance.charts.emgData = JSON.parse(value);
                 }
                 alsglance.dashboard.patient.renderEmg();
                 $(".loadingEmg").remove();
@@ -754,21 +768,8 @@ alsglance.dashboard.patient = alsglance.dashboard.patient || {
         var hourFormat = d3.format('.0f');
 
         data.forEach(function (d) {
-            var date = new Date();
-            date.setISO8601(d.DimDateDetails.DateIso);
-            d.DateDate = date;
-            d.MuscleAbbreviation = d.DimMuscleDetails.Acronym;
-            d.AUC = d.Area;
-            d.DateMonthName = d.DimDateDetails[alsglance.resources.monthNameKey];
-            d.DateYear = d.DimDateDetails.Year;
-            d.PatientName = d.DimPatientDetails.Name;
-            d.TimeHour = d.DimTimeDetails.Hour24;
-            d.DateQuarter = d.DimDateDetails.Quarter;
-            d.TimeTimeOfDay = d.DimTimeDetails[alsglance.resources.timeOfDayKey];
             d.DateMonthInYear = d3.time.month(d.DateDate); // pre-calculate month for better performance
-        });
-
-        //### Create Crossfilter Dimensions and Groups
+        });        //### Create Crossfilter Dimensions and Groups
         var ndx = crossfilter(data);
         var all = ndx.groupAll();
 
@@ -789,7 +790,7 @@ alsglance.dashboard.patient = alsglance.dashboard.patient || {
         //#region Muscle
 
         var muscleDimension = ndx.dimension(function (d) {
-            return d.MuscleAbbreviation;
+            return d.MuscleKeycol;
         });
         // produce counts records in the dimension
         var muscleGroup = muscleDimension.group().reduceCount();

@@ -458,8 +458,8 @@ alsglance.dashboard.patient = alsglance.dashboard.patient || {
 
         if (alsglance.dashboard.settings.envelopeWindowSize == null) {
             alsglance.dashboard.settings.showPredictions = alsglance.dashboard.settings.showFailureThreshold = true;
-            alsglance.dashboard.settings.atThreshold = alsglance.dashboard.settings.fcrThreshold = 0.018;
-            alsglance.dashboard.settings.scmThreshold = 0.013;
+            alsglance.dashboard.settings.atThreshold = alsglance.dashboard.settings.fcrThreshold = 18;
+            alsglance.dashboard.settings.scmThreshold = 13;
             alsglance.dashboard.settings.envelopeWindowSize = 15;
         }
         $('#showPredictions').prop('checked', alsglance.dashboard.settings.showPredictions);
@@ -484,9 +484,21 @@ alsglance.dashboard.patient = alsglance.dashboard.patient || {
         $.when(alsglance.apiClient.get("FactEmgs?$expand=DimPatientDetails,DimMuscleDetails,DimDateDetails,DimTimeDetails&$filter=PatientKeycol eq " + alsglance.dashboard.patient.id))
         //$.when(alsglance.apiClient.get("Facts?$filter=PatientId eq " + alsglance.dashboard.patient.id))
             .then(function (data) {
-                //    data = alsglance.dashboard.patient.addPredictions(JSON.flatten(data));
-                data = alsglance.dashboard.patient.addPredictions(data.d.results);
-                //      console.log(moment.duration(moment().diff(then)));
+                data = data.d.results;
+                data.forEach(function (d) {
+                    d.MuscleAbbreviation = d.DimMuscleDetails.Acronym;
+                    d.AUC = parseFloat(d.Area);
+                    d.DateMonthName = d.DimDateDetails[alsglance.resources.monthNameKey];
+                    d.DateYear = d.DimDateDetails.Year;
+                    d.PatientName = d.DimPatientDetails.Name;
+                    d.TimeHour = d.DimTimeDetails.Hour24;
+                    d.DateQuarter = d.DimDateDetails.Quarter;
+                    var date = new Date();
+                    date.setISO8601(d.DimDateDetails.DateIso);
+                    d.DateDate = date;
+                    d.TimeTimeOfDay = d.DimTimeDetails[alsglance.resources.timeOfDayKey];
+                });
+                data = alsglance.dashboard.patient.addPredictions(data);
 
                 alsglance.dashboard.patient.load(data);
                 colorbrewer.showColorSchemeButton(alsglance.dashboard.settings.colorScheme); //has to be called after the charts have been created
@@ -573,6 +585,7 @@ alsglance.dashboard.patient = alsglance.dashboard.patient || {
 
         var muscles = [];
         var lastDate = moment(data[data.length - 1].DateDate);
+
         data.forEach(function (entry) {
             if (lastDate.diff(entry.DateDate, 'months') <= alsglance.dashboard.settings.predictionBackLog) {
 
@@ -601,7 +614,7 @@ alsglance.dashboard.patient = alsglance.dashboard.patient || {
                     startDate = startDate.add(1, "months");
                     var ticks = startDate.valueOf();
                     var prediction = {
-                        DateDate: startDate.format("YYYY-MM-DD HH:mm"),
+                        DateDate: new Date(moment(startDate.format("YYYY-MM-DD HH:mm")).valueOf()),
                         AUC: equation[0] * ticks + equation[1],
                         DateMonthName: startDate.format("MMMM"),
                         DateYear: parseInt(startDate.format("YYYY")),
@@ -754,21 +767,8 @@ alsglance.dashboard.patient = alsglance.dashboard.patient || {
         var hourFormat = d3.format('.0f');
 
         data.forEach(function (d) {
-            var date = new Date();
-            date.setISO8601(d.DimDateDetails.DateIso);
-            d.DateDate = date;
-            d.MuscleAbbreviation = d.DimMuscleDetails.Acronym;
-            d.AUC = d.Area;
-            d.DateMonthName = d.DimDateDetails[alsglance.resources.monthNameKey];
-            d.DateYear = d.DimDateDetails.Year;
-            d.PatientName = d.DimPatientDetails.Name;
-            d.TimeHour = d.DimTimeDetails.Hour24;
-            d.DateQuarter = d.DimDateDetails.Quarter;
-            d.TimeTimeOfDay = d.DimTimeDetails[alsglance.resources.timeOfDayKey];
             d.DateMonthInYear = d3.time.month(d.DateDate); // pre-calculate month for better performance
-        });
-
-        //### Create Crossfilter Dimensions and Groups
+        });        //### Create Crossfilter Dimensions and Groups
         var ndx = crossfilter(data);
         var all = ndx.groupAll();
 

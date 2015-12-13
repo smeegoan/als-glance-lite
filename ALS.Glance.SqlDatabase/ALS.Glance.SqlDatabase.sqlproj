@@ -59,33 +59,16 @@
     <Folder Include="Properties" />
     <Folder Include="dbo\" />
     <Folder Include="dbo\Tables\" />
-    <Folder Include="dbo\Views\" />
     <Folder Include="Scripts" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="dbo\Tables\Fact.sql" />
-    <Build Include="dbo\Tables\D_Time.sql" />
-    <Build Include="dbo\Tables\D_Patient.sql" />
-    <Build Include="dbo\Tables\D_Muscle.sql" />
-    <Build Include="dbo\Tables\D_Date.sql" />
     <Build Include="dbo\Tables\AspNetUsers.sql" />
     <Build Include="dbo\Tables\AspNetUserRoles.sql" />
     <Build Include="dbo\Tables\AspNetUserLogins.sql" />
     <Build Include="dbo\Tables\AspNetUserClaims.sql" />
     <Build Include="dbo\Tables\AspNetRoles.sql" />
-    <Build Include="dbo\Tables\AspNetExtApplications.sql" />
-    <Build Include="dbo\Tables\AspNetExtApiAuthenticationTokens.sql" />
-    <Build Include="dbo\Tables\AspNetExtApiAuthenticationAccessTokens.sql" />
-    <Build Include="dbo\Tables\ApplicationSettings.sql" />
-    <Build Include="dbo\Views\Facts.sql" />
-    <None Include="Scripts\Script.Fact.sql" />
-    <Build Include="dbo\Tables\D_Emg.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\Script.PostDeployment.sql" />
-    <None Include="Scripts\Script.Emg.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Scripts\Script.Date.sql" />
   </ItemGroup>
 </Project>
